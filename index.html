@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Lunanny — Control de Votos</title>
-<!-- index.html = panel de control | overlay_obs.html = fuente OBS -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 
@@ -21,136 +20,31 @@
     gap: 24px;
   }
 
-  h1 {
-    font-size: 13px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #9147ff;
-    opacity: 0.8;
-  }
+  h1 { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #9147ff; opacity: 0.8; }
 
-  .score-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
+  .score-display { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .score-big { font-size: 72px; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -2px; }
+  .score-sub { font-size: 12px; color: #adadb8; letter-spacing: 2px; text-transform: uppercase; }
 
-  .score-big {
-    font-size: 72px;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1;
-    letter-spacing: -2px;
-  }
+  .dist { display: flex; gap: 8px; align-items: flex-end; }
+  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 40px; }
+  .bar-count { font-size: 10px; color: #adadb8; }
+  .bar { width: 100%; background: #18181b; border-radius: 3px; height: 60px; display: flex; align-items: flex-end; overflow: hidden; }
+  .bar-fill { width: 100%; background: #9147ff; border-radius: 3px 3px 0 0; transition: height 0.3s ease; }
+  .bar-label { font-size: 11px; color: #efeff1; font-weight: 700; }
 
-  .score-sub {
-    font-size: 12px;
-    color: #adadb8;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .dist {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-  }
-
-  .bar-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    width: 40px;
-  }
-
-  .bar-count {
-    font-size: 10px;
-    color: #adadb8;
-  }
-
-  .bar {
-    width: 100%;
-    background: #18181b;
-    border-radius: 3px;
-    height: 60px;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    width: 100%;
-    background: #9147ff;
-    border-radius: 3px 3px 0 0;
-    transition: height 0.3s ease;
-  }
-
-  .bar-label {
-    font-size: 11px;
-    color: #efeff1;
-    font-weight: 700;
-  }
-
-  .voters-box {
-    width: 100%;
-    max-width: 420px;
-    background: #18181b;
-    border-radius: 8px;
-    padding: 12px 14px;
-    max-height: 160px;
-    overflow-y: auto;
-  }
-
-  .voters-title {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #adadb8;
-    margin-bottom: 8px;
-  }
-
-  .voter-row {
-    font-size: 11px;
-    color: #efeff1;
-    padding: 3px 0;
-    border-bottom: 1px solid #26262c;
-    display: flex;
-    justify-content: space-between;
-  }
-
+  .voters-box { width: 100%; max-width: 420px; background: #18181b; border-radius: 8px; padding: 12px 14px; max-height: 160px; overflow-y: auto; }
+  .voters-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #adadb8; margin-bottom: 8px; }
+  .voter-row { font-size: 11px; color: #efeff1; padding: 3px 0; border-bottom: 1px solid #26262c; display: flex; justify-content: space-between; }
   .voter-score { color: #9147ff; font-weight: 700; }
 
-  .log-box {
-    width: 100%;
-    max-width: 420px;
-    background: #18181b;
-    border-radius: 8px;
-    padding: 12px 14px;
-    max-height: 140px;
-    overflow-y: auto;
-  }
-
-  .log-title {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #adadb8;
-    margin-bottom: 8px;
-  }
-
-  .log-entry {
-    font-size: 10px;
-    color: #6f6f7a;
-    padding: 2px 0;
-  }
+  .log-box { width: 100%; max-width: 420px; background: #18181b; border-radius: 8px; padding: 12px 14px; max-height: 140px; overflow-y: auto; }
+  .log-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #adadb8; margin-bottom: 8px; }
+  .log-entry { font-size: 10px; color: #6f6f7a; padding: 2px 0; }
   .log-entry.new { color: #9147ff; }
+  .log-entry.err { color: #ff4444; }
 
-  .btns {
-    display: flex;
-    gap: 12px;
-  }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
   button {
     font-family: 'Space Mono', monospace;
@@ -165,40 +59,20 @@
     transition: all 0.15s;
   }
 
-  #btnStart {
-    background: #9147ff;
-    color: #fff;
-  }
+  #btnStart { background: #9147ff; color: #fff; }
   #btnStart:hover { background: #772ce8; }
   #btnStart.active { background: #1db954; }
-
-  #btnReset {
-    background: #26262c;
-    color: #adadb8;
-  }
+  #btnReset { background: #26262c; color: #adadb8; }
   #btnReset:hover { background: #3a3a44; color: #efeff1; }
+  #btnCopyOBS { background: #18181b; color: #adadb8; border: 1px solid #3a3a44; }
+  #btnCopyOBS:hover { background: #26262c; color: #efeff1; border-color: #9147ff; }
+  #btnCopyOBS.copied { background: #1db954; color: #fff; border-color: #1db954; }
 
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #6f6f7a;
-    display: inline-block;
-    margin-right: 6px;
-  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #6f6f7a; display: inline-block; margin-right: 6px; }
   .status-dot.on { background: #1db954; box-shadow: 0 0 6px #1db954; }
+  .status-line { font-size: 10px; color: #6f6f7a; letter-spacing: 1px; }
 
-  .status-line {
-    font-size: 10px;
-    color: #6f6f7a;
-    letter-spacing: 1px;
-  }
-
-  .channel-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
+  .channel-input-wrap { display: flex; align-items: center; gap: 8px; }
   input[type="text"] {
     font-family: 'Space Mono', monospace;
     font-size: 12px;
@@ -212,66 +86,130 @@
   }
   input[type="text"]:focus { border-color: #9147ff; }
 
-  .hint {
-    font-size: 10px;
-    color: #6f6f7a;
-    text-align: center;
-    max-width: 340px;
-    line-height: 1.6;
+  .hint { font-size: 10px; color: #6f6f7a; text-align: center; max-width: 340px; line-height: 1.6; }
+
+  /* Overlay OBS oculto — solo existe para que la URL ?overlay funcione */
+  .obs-overlay {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
   }
+
+  .obs-star-score { display: flex; align-items: center; gap: 12px; }
+  .obs-star { font-size: 52px; line-height: 1; }
+  .obs-score { font-size: 68px; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(145,71,255,0.8), 0 2px 4px rgba(0,0,0,0.9); line-height: 1; letter-spacing: -2px; }
+  .obs-voters { font-size: 13px; color: rgba(255,255,255,0.7); letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+
+  .obs-card { opacity: 0; transform: scale(0.85); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .obs-card.show { opacity: 1; transform: scale(1); }
 </style>
 </head>
 <body>
 
-<h1>⭐ Control de Votos · Twitch</h1>
+<script>
+  // Si la URL tiene ?overlay, mostrar solo el overlay OBS
+  if (location.search.includes('overlay')) {
+    document.addEventListener('DOMContentLoaded', initOverlay);
+  }
+</script>
 
-<div class="channel-input-wrap">
-  <span style="font-size:11px;color:#adadb8;">twitch.tv/</span>
-  <input type="text" id="channelInput" value="lunanny" placeholder="canal">
+<!-- PANEL DE CONTROL -->
+<div id="panel">
+  <h1>⭐ Control de Votos · Twitch</h1>
+
+  <div class="channel-input-wrap">
+    <span style="font-size:11px;color:#adadb8;">twitch.tv/</span>
+    <input type="text" id="channelInput" value="lunanny" placeholder="canal">
+  </div>
+
+  <div class="score-display">
+    <div class="score-big" id="scoreDisplay">—</div>
+    <div class="score-sub" id="voterCount">0 votos</div>
+  </div>
+
+  <div class="dist" id="distBars"></div>
+
+  <div class="voters-box">
+    <div class="voters-title">Votantes</div>
+    <div id="voterList"></div>
+  </div>
+
+  <div class="log-box">
+    <div class="log-title">Log de chat</div>
+    <div id="chatLog"></div>
+  </div>
+
+  <div class="btns">
+    <button id="btnStart">▶ Iniciar</button>
+    <button id="btnReset">↺ Reiniciar</button>
+    <button id="btnCopyOBS">⧉ Copiar URL OBS</button>
+  </div>
+
+  <div class="status-line">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Detenido</span>
+  </div>
+
+  <div class="hint">
+    Solo acepta números del 1 al 5 en el chat.<br>
+    Un usuario = un voto (el último que manda).
+  </div>
 </div>
 
-<div class="score-display">
-  <div class="score-big" id="scoreDisplay">—</div>
-  <div class="score-sub" id="voterCount">0 votos</div>
-</div>
-
-<div class="dist" id="distBars">
-  <!-- generado por JS -->
-</div>
-
-<div class="voters-box">
-  <div class="voters-title">Votantes</div>
-  <div id="voterList"></div>
-</div>
-
-<div class="log-box">
-  <div class="log-title">Log de chat</div>
-  <div id="chatLog"></div>
-</div>
-
-<div class="btns">
-  <button id="btnStart">▶ Iniciar</button>
-  <button id="btnReset">↺ Reiniciar</button>
-</div>
-
-<div class="status-line">
-  <span class="status-dot" id="statusDot"></span>
-  <span id="statusText">Detenido</span>
-</div>
-
-<div class="hint">
-  Solo acepta números del 1 al 5 en el chat.<br>
-  Un usuario = un voto (el último que manda).
+<!-- OVERLAY OBS (visible solo con ?overlay en la URL) -->
+<div class="obs-overlay" id="obsOverlay" style="display:none;">
+  <div class="obs-card" id="obsCard">
+    <div class="obs-star-score">
+      <span class="obs-star">⭐</span>
+      <span class="obs-score" id="obsScore">—</span>
+    </div>
+    <div class="obs-voters" id="obsVoters"></div>
+  </div>
 </div>
 
 <script>
-// ── Estado ──────────────────────────────────────────────
-let running = false;
-let pollTimer = null;
-let cursor = null; // último mensaje procesado
-const votes = {}; // { username: score }
+// ── Modo overlay ──────────────────────────────────────────
+function initOverlay() {
+  document.getElementById('panel').style.display = 'none';
+  document.getElementById('obsOverlay').style.display = 'flex';
+  document.body.style.background = 'transparent';
 
-// ── Barras de distribución ───────────────────────────────
+  function readVotes() {
+    try {
+      const raw = localStorage.getItem('twitch_votes');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const card = document.getElementById('obsCard');
+      if (data.avg && data.total > 0) {
+        document.getElementById('obsScore').textContent = data.avg;
+        document.getElementById('obsVoters').textContent = `${data.total} voto${data.total !== 1 ? 's' : ''}`;
+        card.classList.add('show');
+      } else {
+        card.classList.remove('show');
+      }
+    } catch(e) {}
+  }
+
+  window.addEventListener('storage', readVotes);
+  setInterval(readVotes, 1000);
+  readVotes();
+}
+
+if (location.search.includes('overlay')) {
+  initOverlay();
+}
+
+// ── Panel de control ──────────────────────────────────────
+let ws = null;
+let running = false;
+const votes = {};
+
 function initBars() {
   const wrap = document.getElementById('distBars');
   wrap.innerHTML = '';
@@ -279,15 +217,12 @@ function initBars() {
     wrap.innerHTML += `
       <div class="bar-wrap">
         <div class="bar-count" id="c${i}">0</div>
-        <div class="bar" title="${i}">
-          <div class="bar-fill" id="b${i}" style="height:0%"></div>
-        </div>
+        <div class="bar"><div class="bar-fill" id="b${i}" style="height:0%"></div></div>
         <div class="bar-label">${i}</div>
       </div>`;
   }
 }
 
-// ── Actualizar UI ─────────────────────────────────────────
 function updateUI() {
   const vals = Object.values(votes);
   const total = vals.length;
@@ -296,158 +231,103 @@ function updateUI() {
   document.getElementById('scoreDisplay').textContent = avg ?? '—';
   document.getElementById('voterCount').textContent = `${total} voto${total !== 1 ? 's' : ''}`;
 
-  // conteo por nota
-  const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  const counts = { 1:0, 2:0, 3:0, 4:0, 5:0 };
   vals.forEach(v => counts[v]++);
   const maxCount = Math.max(...Object.values(counts), 1);
-
   for (let i = 1; i <= 5; i++) {
     document.getElementById(`c${i}`).textContent = counts[i];
     document.getElementById(`b${i}`).style.height = (counts[i] / maxCount * 100) + '%';
   }
 
-  // lista de votantes
-  const listEl = document.getElementById('voterList');
-  const entries = Object.entries(votes).sort((a, b) => a[0].localeCompare(b[0]));
-  listEl.innerHTML = entries.map(([u, s]) =>
-    `<div class="voter-row"><span>${u}</span><span class="voter-score">${s}</span></div>`
-  ).join('');
+  document.getElementById('voterList').innerHTML = Object.entries(votes)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([u, s]) => `<div class="voter-row"><span>${u}</span><span class="voter-score">${s}</span></div>`)
+    .join('');
 
-  // sincronizar con OBS overlay via localStorage
   localStorage.setItem('twitch_votes', JSON.stringify({ avg, total, votes }));
 }
 
-// ── Log ───────────────────────────────────────────────────
-function addLog(msg, isNew = false) {
+function addLog(msg, type = '') {
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
-  div.className = 'log-entry' + (isNew ? ' new' : '');
+  div.className = 'log-entry' + (type ? ' ' + type : '');
   div.textContent = msg;
   log.prepend(div);
-  // limitar entradas
-  while (log.children.length > 60) log.removeChild(log.lastChild);
+  while (log.children.length > 80) log.removeChild(log.lastChild);
 }
 
-// ── Fetch Twitch (sin auth) ───────────────────────────────
-async function fetchMessages(channel) {
-  // Endpoint público de Twitch IRC en modo anon — usamos el API de chat badges/reciente
-  // Twitch no tiene endpoint público sin auth para mensajes de chat en tiempo real.
-  // La única forma sin WS y sin auth es scrapear la página, lo cual viola ToS.
-  // SOLUCIÓN: usamos el endpoint TMI (Twitch Message Interface) no oficial
-  // https://tmi.twitch.tv/group/user/{channel}/chatters → solo da lista, no mensajes.
-  //
-  // Alternativa real sin WS: el HTML abre una conexión EventSource o polling
-  // al chat embed iframe y lee los mensajes del DOM.
-  // PERO: esto está limitado por CORS desde un archivo local.
-  //
-  // La solución más pragmática SIN backend: usar el chat embed de Twitch
-  // dentro de un iframe oculto + postMessage. PERO Twitch bloquea iframes
-  // en dominios no registrados (file://).
-  //
-  // ── SOLUCIÓN REAL QUE FUNCIONA ──────────────────────────
-  // Twitch tiene un endpoint de Recent Messages via 7tv/recent-messages
-  // (servicio de terceros, no oficial pero muy usado):
-  // https://recent-messages.robotty.de/api/v2/recent_messages/{channel}
-  //
-  // Para polling en vivo, usamos este endpoint que devuelve los últimos
-  // mensajes recientes. Hacemos polling cada 3s y filtramos los nuevos
-  // por timestamp.
-
-  const url = `https://recent-messages.robotty.de/api/v2/recent_messages/${channel}?hide_moderation_messages=true&limit=100`;
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data.messages || [];
-  } catch (e) {
-    addLog(`Error: ${e.message}`);
-    return [];
-  }
-}
-
-// ── Parsear mensaje IRC de Twitch ─────────────────────────
-// Formato: @tags :user!user@user.tmi.twitch.tv PRIVMSG #canal :mensaje
-function parseIRC(raw) {
-  const match = raw.match(/:(\w+)!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :(.+)/);
-  if (!match) return null;
-  return { user: match[1].toLowerCase(), text: match[2].trim() };
-}
-
-function getMsgId(raw) {
-  const m = raw.match(/;id=([a-f0-9-]+)/);
-  return m ? m[1] : null;
-}
-
-// ── Poll principal ────────────────────────────────────────
-const seenIds = new Set();
-let firstRun = true;
-
-async function poll() {
+function connect() {
   const channel = document.getElementById('channelInput').value.trim().toLowerCase();
   if (!channel) return;
 
-  const rawMessages = await fetchMessages(channel);
+  ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
-  if (firstRun) {
-    // Marcar todos los existentes como vistos sin procesar
-    rawMessages.forEach(r => {
-      const id = getMsgId(r);
-      if (id) seenIds.add(id);
-    });
-    firstRun = false;
-    addLog(`Escuchando canal: ${channel}`);
-    return;
-  }
+  ws.onopen = () => {
+    ws.send('CAP REQ :twitch.tv/tags');
+    ws.send('PASS oauth:justinfan');
+    ws.send('NICK justinfan' + Math.floor(Math.random() * 99999));
+    ws.send(`JOIN #${channel}`);
+    addLog(`Conectado a #${channel}`);
+    setStatus(true);
+  };
 
-  let newVotes = 0;
-  for (const raw of rawMessages) {
-    const id = getMsgId(raw);
-    if (!id || seenIds.has(id)) continue;
-    seenIds.add(id);
+  ws.onmessage = (e) => {
+    const lines = e.data.split('\r\n');
+    for (const line of lines) {
+      if (!line) continue;
+      if (line.startsWith('PING')) { ws.send('PONG :tmi.twitch.tv'); continue; }
 
-    const parsed = parseIRC(raw);
-    if (!parsed) continue;
+      const match = line.match(/:(\w+)!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :(.+)/);
+      if (!match) continue;
 
-    const num = parseInt(parsed.text, 10);
-    if ([1, 2, 3, 4, 5].includes(num) && parsed.text.trim() === String(num)) {
-      const prev = votes[parsed.user];
-      votes[parsed.user] = num;
-      addLog(`${parsed.user}: ${num}${prev !== undefined ? ` (cambió de ${prev})` : ''}`, true);
-      newVotes++;
+      const user = match[1].toLowerCase();
+      const text = match[2].trim();
+      const num = parseInt(text, 10);
+
+      if ([1,2,3,4,5].includes(num) && text === String(num)) {
+        const prev = votes[user];
+        votes[user] = num;
+        addLog(`${user}: ${num}${prev !== undefined ? ` (cambió de ${prev})` : ''}`, 'new');
+        updateUI();
+      }
     }
-  }
+  };
 
-  if (newVotes > 0) updateUI();
+  ws.onerror = () => addLog('Error de conexión', 'err');
+
+  ws.onclose = () => {
+    addLog('Desconectado', 'err');
+    setStatus(false);
+    if (running) setTimeout(connect, 3000);
+  };
 }
 
-// ── Botón Iniciar/Detener ─────────────────────────────────
+function disconnect() {
+  if (ws) { ws.close(); ws = null; }
+}
+
+function setStatus(on) {
+  document.getElementById('statusDot').classList.toggle('on', on);
+  document.getElementById('statusText').textContent = on ? 'Escuchando...' : 'Detenido';
+}
+
 document.getElementById('btnStart').addEventListener('click', () => {
   if (!running) {
     running = true;
-    firstRun = true;
-    seenIds.clear();
     document.getElementById('btnStart').textContent = '⏹ Detener';
     document.getElementById('btnStart').classList.add('active');
-    document.getElementById('statusDot').classList.add('on');
-    document.getElementById('statusText').textContent = 'Escuchando...';
-    poll();
-    pollTimer = setInterval(poll, 3000);
+    connect();
   } else {
     running = false;
-    clearInterval(pollTimer);
+    disconnect();
     document.getElementById('btnStart').textContent = '▶ Iniciar';
     document.getElementById('btnStart').classList.remove('active');
-    document.getElementById('statusDot').classList.remove('on');
-    document.getElementById('statusText').textContent = 'Detenido';
+    setStatus(false);
   }
 });
 
-// ── Botón Reiniciar ───────────────────────────────────────
 document.getElementById('btnReset').addEventListener('click', () => {
   Object.keys(votes).forEach(k => delete votes[k]);
-  seenIds.clear();
-  firstRun = running; // si está corriendo, ignorar mensajes actuales
   document.getElementById('scoreDisplay').textContent = '—';
   document.getElementById('voterCount').textContent = '0 votos';
   document.getElementById('voterList').innerHTML = '';
@@ -460,9 +340,23 @@ document.getElementById('btnReset').addEventListener('click', () => {
   addLog('Votos reiniciados.');
 });
 
-// ── Init ──────────────────────────────────────────────────
-initBars();
-updateUI();
+document.getElementById('btnCopyOBS').addEventListener('click', () => {
+  const url = location.origin + location.pathname + '?overlay';
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('btnCopyOBS');
+    btn.textContent = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '⧉ Copiar URL OBS';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+});
+
+if (!location.search.includes('overlay')) {
+  initBars();
+  updateUI();
+}
 </script>
 </body>
 </html>
