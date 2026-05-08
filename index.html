@@ -2,153 +2,365 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Lunanny — Control de Votos</title>
+<title>Lunanny — Votos</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: #0e0e10;
-    color: #efeff1;
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 32px 16px;
-    gap: 24px;
-  }
+/* ════════════════════════════════════
+   PANEL DE CONTROL
+════════════════════════════════════ */
+body {
+  background: #0a0a0f;
+  color: #efeff1;
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 28px;
+}
 
-  h1 { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #9147ff; opacity: 0.8; }
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
 
-  .score-display { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .score-big { font-size: 72px; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -2px; }
-  .score-sub { font-size: 12px; color: #adadb8; letter-spacing: 2px; text-transform: uppercase; }
+.header-title {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #9147ff;
+}
 
-  .dist { display: flex; gap: 8px; align-items: flex-end; }
-  .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 40px; }
-  .bar-count { font-size: 10px; color: #adadb8; }
-  .bar { width: 100%; background: #18181b; border-radius: 3px; height: 60px; display: flex; align-items: flex-end; overflow: hidden; }
-  .bar-fill { width: 100%; background: #9147ff; border-radius: 3px 3px 0 0; transition: height 0.3s ease; }
-  .bar-label { font-size: 11px; color: #efeff1; font-weight: 700; }
+.channel-wrap {
+  display: flex;
+  align-items: center;
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-  .voters-box { width: 100%; max-width: 420px; background: #18181b; border-radius: 8px; padding: 12px 14px; max-height: 160px; overflow-y: auto; }
-  .voters-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #adadb8; margin-bottom: 8px; }
-  .voter-row { font-size: 11px; color: #efeff1; padding: 3px 0; border-bottom: 1px solid #26262c; display: flex; justify-content: space-between; }
-  .voter-score { color: #9147ff; font-weight: 700; }
+.channel-prefix {
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #6f6f7a;
+  background: #0e0e18;
+  border-right: 1px solid #2a2a3a;
+}
 
-  .log-box { width: 100%; max-width: 420px; background: #18181b; border-radius: 8px; padding: 12px 14px; max-height: 140px; overflow-y: auto; }
-  .log-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #adadb8; margin-bottom: 8px; }
-  .log-entry { font-size: 10px; color: #6f6f7a; padding: 2px 0; }
-  .log-entry.new { color: #9147ff; }
-  .log-entry.err { color: #ff4444; }
+#channelInput {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  background: transparent;
+  border: none;
+  color: #efeff1;
+  padding: 8px 12px;
+  outline: none;
+  width: 160px;
+}
 
-  .btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+/* ── Nota principal ── */
+.score-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  border-radius: 16px;
+  padding: 28px 48px;
+  position: relative;
+  overflow: hidden;
+}
 
-  button {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 10px 22px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+.score-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(145,71,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-  #btnStart { background: #9147ff; color: #fff; }
-  #btnStart:hover { background: #772ce8; }
-  #btnStart.active { background: #1db954; }
-  #btnReset { background: #26262c; color: #adadb8; }
-  #btnReset:hover { background: #3a3a44; color: #efeff1; }
-  #btnCopyOBS { background: #18181b; color: #adadb8; border: 1px solid #3a3a44; }
-  #btnCopyOBS:hover { background: #26262c; color: #efeff1; border-color: #9147ff; }
-  #btnCopyOBS.copied { background: #1db954; color: #fff; border-color: #1db954; }
+.score-star {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
 
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #6f6f7a; display: inline-block; margin-right: 6px; }
-  .status-dot.on { background: #1db954; box-shadow: 0 0 6px #1db954; }
-  .status-line { font-size: 10px; color: #6f6f7a; letter-spacing: 1px; }
+.score-number {
+  font-size: 80px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -4px;
+}
 
-  .channel-input-wrap { display: flex; align-items: center; gap: 8px; }
-  input[type="text"] {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    background: #18181b;
-    border: 1px solid #3a3a44;
-    border-radius: 5px;
-    color: #efeff1;
-    padding: 7px 12px;
-    width: 200px;
-    outline: none;
-  }
-  input[type="text"]:focus { border-color: #9147ff; }
+.score-total {
+  font-size: 10px;
+  color: #6f6f7a;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
 
-  .hint { font-size: 10px; color: #6f6f7a; text-align: center; max-width: 340px; line-height: 1.6; }
+/* ── Barras ── */
+.dist {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  padding: 16px 20px 12px;
+}
 
-  /* Overlay OBS oculto — solo existe para que la URL ?overlay funcione */
-  .obs-overlay {
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: 'Space Mono', monospace;
-  }
+.bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+}
 
-  .obs-star-score { display: flex; align-items: center; gap: 12px; }
-  .obs-star { font-size: 52px; line-height: 1; }
-  .obs-score { font-size: 68px; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(145,71,255,0.8), 0 2px 4px rgba(0,0,0,0.9); line-height: 1; letter-spacing: -2px; }
-  .obs-voters { font-size: 13px; color: rgba(255,255,255,0.7); letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+.bar-count { font-size: 10px; color: #6f6f7a; }
 
-  .obs-card { opacity: 0; transform: scale(0.85); transition: opacity 0.4s ease, transform 0.4s ease; }
-  .obs-card.show { opacity: 1; transform: scale(1); }
+.bar {
+  width: 100%;
+  background: #1a1a28;
+  border-radius: 4px;
+  height: 64px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 100%;
+  background: linear-gradient(to top, #7922ee, #b06aff);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.35s ease;
+  min-height: 0;
+}
+
+.bar-label { font-size: 12px; color: #adadb8; font-weight: 700; }
+
+/* ── Listas ── */
+.box {
+  width: 100%;
+  max-width: 440px;
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.box-title {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #6f6f7a;
+  margin-bottom: 10px;
+}
+
+.voters-list { max-height: 150px; overflow-y: auto; }
+
+.voter-row {
+  font-size: 11px;
+  color: #cfcfdf;
+  padding: 4px 0;
+  border-bottom: 1px solid #1a1a28;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.voter-row:last-child { border-bottom: none; }
+.voter-score { color: #9147ff; font-weight: 700; font-size: 12px; }
+
+.log-list { max-height: 120px; overflow-y: auto; }
+
+.log-entry { font-size: 10px; color: #555566; padding: 2px 0; line-height: 1.5; }
+.log-entry.new { color: #9147ff; }
+.log-entry.err { color: #ff5555; }
+.log-entry.ok { color: #1db954; }
+
+/* ── Botones ── */
+.btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+button {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#btnStart {
+  background: #9147ff;
+  color: #fff;
+  border-color: #9147ff;
+}
+#btnStart:hover { background: #7922ee; border-color: #7922ee; }
+#btnStart.active { background: #1db954; border-color: #1db954; }
+
+#btnReset {
+  background: transparent;
+  color: #6f6f7a;
+  border-color: #2a2a3a;
+}
+#btnReset:hover { color: #efeff1; border-color: #555566; }
+
+#btnCopyOBS {
+  background: transparent;
+  color: #6f6f7a;
+  border-color: #2a2a3a;
+}
+#btnCopyOBS:hover { color: #9147ff; border-color: #9147ff; }
+#btnCopyOBS.copied { background: #1db954; color: #fff; border-color: #1db954; }
+
+/* ── Status ── */
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #555566;
+  letter-spacing: 1px;
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #333344;
+  flex-shrink: 0;
+}
+.status-dot.on { background: #1db954; box-shadow: 0 0 8px #1db954; }
+
+.hint {
+  font-size: 10px;
+  color: #333344;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* ════════════════════════════════════
+   OVERLAY OBS
+════════════════════════════════════ */
+body.obs {
+  background: transparent;
+  padding: 0;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#obsOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.obs-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transform: scale(0.88) translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.obs-card.show {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.obs-row { display: flex; align-items: center; gap: 14px; }
+
+.obs-star {
+  font-size: 54px;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(255, 210, 50, 0.5));
+}
+
+.obs-score {
+  font-size: 72px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -3px;
+  text-shadow:
+    0 0 30px rgba(145,71,255,0.7),
+    0 2px 8px rgba(0,0,0,0.9);
+}
+
+.obs-voters {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+}
 </style>
 </head>
 <body>
 
 <script>
-  // Si la URL tiene ?overlay, mostrar solo el overlay OBS
   if (location.search.includes('overlay')) {
-    document.addEventListener('DOMContentLoaded', initOverlay);
+    document.body.classList.add('obs');
   }
 </script>
 
-<!-- PANEL DE CONTROL -->
+<!-- ════ PANEL DE CONTROL ════ -->
 <div id="panel">
-  <h1>⭐ Control de Votos · Twitch</h1>
 
-  <div class="channel-input-wrap">
-    <span style="font-size:11px;color:#adadb8;">twitch.tv/</span>
+  <div class="header">
+    <div class="header-title">⭐ Control de votos · Twitch</div>
+  </div>
+
+  <div class="channel-wrap">
+    <span class="channel-prefix">twitch.tv /</span>
     <input type="text" id="channelInput" value="lunanny" placeholder="canal">
   </div>
 
-  <div class="score-display">
-    <div class="score-big" id="scoreDisplay">—</div>
-    <div class="score-sub" id="voterCount">0 votos</div>
+  <div class="score-card">
+    <div class="score-star">⭐</div>
+    <div class="score-number" id="scoreDisplay">—</div>
+    <div class="score-total" id="voterCount">0 votos</div>
   </div>
 
   <div class="dist" id="distBars"></div>
 
-  <div class="voters-box">
-    <div class="voters-title">Votantes</div>
-    <div id="voterList"></div>
+  <div class="box">
+    <div class="box-title">Votantes</div>
+    <div class="voters-list" id="voterList"></div>
   </div>
 
-  <div class="log-box">
-    <div class="log-title">Log de chat</div>
-    <div id="chatLog"></div>
+  <div class="box">
+    <div class="box-title">Log de chat</div>
+    <div class="log-list" id="chatLog"></div>
   </div>
 
   <div class="btns">
     <button id="btnStart">▶ Iniciar</button>
     <button id="btnReset">↺ Reiniciar</button>
-    <button id="btnCopyOBS">⧉ Copiar URL OBS</button>
+    <button id="btnCopyOBS">⧉ URL para OBS</button>
   </div>
 
   <div class="status-line">
@@ -157,15 +369,16 @@
   </div>
 
   <div class="hint">
-    Solo acepta números del 1 al 5 en el chat.<br>
-    Un usuario = un voto (el último que manda).
+    Solo acepta 1 · 2 · 3 · 4 · 5 en el chat.<br>
+    Un usuario = un voto. El último reemplaza al anterior.
   </div>
+
 </div>
 
-<!-- OVERLAY OBS (visible solo con ?overlay en la URL) -->
-<div class="obs-overlay" id="obsOverlay" style="display:none;">
+<!-- ════ OVERLAY OBS ════ -->
+<div id="obsOverlay" style="display:none;">
   <div class="obs-card" id="obsCard">
-    <div class="obs-star-score">
+    <div class="obs-row">
       <span class="obs-star">⭐</span>
       <span class="obs-score" id="obsScore">—</span>
     </div>
@@ -174,188 +387,218 @@
 </div>
 
 <script>
-// ── Modo overlay ──────────────────────────────────────────
-function initOverlay() {
-  document.getElementById('panel').style.display = 'none';
-  document.getElementById('obsOverlay').style.display = 'flex';
-  document.body.style.background = 'transparent';
+const IS_OVERLAY = location.search.includes('overlay');
 
-  function readVotes() {
-    try {
-      const raw = localStorage.getItem('twitch_votes');
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      const card = document.getElementById('obsCard');
-      if (data.avg && data.total > 0) {
-        document.getElementById('obsScore').textContent = data.avg;
-        document.getElementById('obsVoters').textContent = `${data.total} voto${data.total !== 1 ? 's' : ''}`;
-        card.classList.add('show');
-      } else {
-        card.classList.remove('show');
-      }
-    } catch(e) {}
-  }
-
-  window.addEventListener('storage', readVotes);
-  setInterval(readVotes, 1000);
-  readVotes();
-}
-
-if (location.search.includes('overlay')) {
-  initOverlay();
-}
-
-// ── Panel de control ──────────────────────────────────────
+// ── Lógica IRC compartida ─────────────────────────────────
 let ws = null;
 let running = false;
 const votes = {};
 
-function initBars() {
-  const wrap = document.getElementById('distBars');
-  wrap.innerHTML = '';
-  for (let i = 1; i <= 5; i++) {
-    wrap.innerHTML += `
-      <div class="bar-wrap">
-        <div class="bar-count" id="c${i}">0</div>
-        <div class="bar"><div class="bar-fill" id="b${i}" style="height:0%"></div></div>
-        <div class="bar-label">${i}</div>
-      </div>`;
-  }
-}
-
-function updateUI() {
+function calcAvg() {
   const vals = Object.values(votes);
-  const total = vals.length;
-  const avg = total ? (vals.reduce((a, b) => a + b, 0) / total).toFixed(1) : null;
-
-  document.getElementById('scoreDisplay').textContent = avg ?? '—';
-  document.getElementById('voterCount').textContent = `${total} voto${total !== 1 ? 's' : ''}`;
-
-  const counts = { 1:0, 2:0, 3:0, 4:0, 5:0 };
-  vals.forEach(v => counts[v]++);
-  const maxCount = Math.max(...Object.values(counts), 1);
-  for (let i = 1; i <= 5; i++) {
-    document.getElementById(`c${i}`).textContent = counts[i];
-    document.getElementById(`b${i}`).style.height = (counts[i] / maxCount * 100) + '%';
-  }
-
-  document.getElementById('voterList').innerHTML = Object.entries(votes)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([u, s]) => `<div class="voter-row"><span>${u}</span><span class="voter-score">${s}</span></div>`)
-    .join('');
-
-  localStorage.setItem('twitch_votes', JSON.stringify({ avg, total, votes }));
+  if (!vals.length) return null;
+  return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
 }
 
-function addLog(msg, type = '') {
-  const log = document.getElementById('chatLog');
-  const div = document.createElement('div');
-  div.className = 'log-entry' + (type ? ' ' + type : '');
-  div.textContent = msg;
-  log.prepend(div);
-  while (log.children.length > 80) log.removeChild(log.lastChild);
-}
-
-function connect() {
-  const channel = document.getElementById('channelInput').value.trim().toLowerCase();
-  if (!channel) return;
-
+function connectIRC(channel, onVote) {
+  if (ws) ws.close();
   ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
   ws.onopen = () => {
     ws.send('CAP REQ :twitch.tv/tags');
     ws.send('PASS oauth:justinfan');
     ws.send('NICK justinfan' + Math.floor(Math.random() * 99999));
-    ws.send(`JOIN #${channel}`);
-    addLog(`Conectado a #${channel}`);
-    setStatus(true);
+    ws.send('JOIN #' + channel);
   };
 
   ws.onmessage = (e) => {
-    const lines = e.data.split('\r\n');
-    for (const line of lines) {
+    for (const line of e.data.split('\r\n')) {
       if (!line) continue;
       if (line.startsWith('PING')) { ws.send('PONG :tmi.twitch.tv'); continue; }
 
-      const match = line.match(/:(\w+)!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :(.+)/);
-      if (!match) continue;
+      const m = line.match(/:(\w+)!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :(.+)/);
+      if (!m) continue;
 
-      const user = match[1].toLowerCase();
-      const text = match[2].trim();
+      const user = m[1].toLowerCase();
+      const text = m[2].trim();
       const num = parseInt(text, 10);
 
       if ([1,2,3,4,5].includes(num) && text === String(num)) {
         const prev = votes[user];
         votes[user] = num;
-        addLog(`${user}: ${num}${prev !== undefined ? ` (cambió de ${prev})` : ''}`, 'new');
-        updateUI();
+        onVote(user, num, prev);
       }
     }
   };
 
-  ws.onerror = () => addLog('Error de conexión', 'err');
-
   ws.onclose = () => {
-    addLog('Desconectado', 'err');
-    setStatus(false);
-    if (running) setTimeout(connect, 3000);
+    if (running) setTimeout(() => connectIRC(channel, onVote), 3000);
   };
+
+  ws.onerror = () => {};
 }
 
-function disconnect() {
-  if (ws) { ws.close(); ws = null; }
-}
+// ══════════════════════════════════════
+// MODO OVERLAY
+// ══════════════════════════════════════
+if (IS_OVERLAY) {
+  document.getElementById('panel').style.display = 'none';
+  document.getElementById('obsOverlay').style.display = 'flex';
 
-function setStatus(on) {
-  document.getElementById('statusDot').classList.toggle('on', on);
-  document.getElementById('statusText').textContent = on ? 'Escuchando...' : 'Detenido';
-}
+  const card = document.getElementById('obsCard');
+  const scoreEl = document.getElementById('obsScore');
+  const votersEl = document.getElementById('obsVoters');
 
-document.getElementById('btnStart').addEventListener('click', () => {
-  if (!running) {
-    running = true;
-    document.getElementById('btnStart').textContent = '⏹ Detener';
-    document.getElementById('btnStart').classList.add('active');
-    connect();
-  } else {
-    running = false;
-    disconnect();
-    document.getElementById('btnStart').textContent = '▶ Iniciar';
-    document.getElementById('btnStart').classList.remove('active');
-    setStatus(false);
+  function updateOverlay() {
+    const avg = calcAvg();
+    const total = Object.values(votes).length;
+    if (avg && total > 0) {
+      scoreEl.textContent = avg;
+      votersEl.textContent = total + ' voto' + (total !== 1 ? 's' : '');
+      card.classList.add('show');
+    } else {
+      card.classList.remove('show');
+    }
   }
-});
 
-document.getElementById('btnReset').addEventListener('click', () => {
-  Object.keys(votes).forEach(k => delete votes[k]);
-  document.getElementById('scoreDisplay').textContent = '—';
-  document.getElementById('voterCount').textContent = '0 votos';
-  document.getElementById('voterList').innerHTML = '';
-  document.getElementById('chatLog').innerHTML = '';
-  for (let i = 1; i <= 5; i++) {
-    document.getElementById(`c${i}`).textContent = '0';
-    document.getElementById(`b${i}`).style.height = '0%';
-  }
-  localStorage.setItem('twitch_votes', JSON.stringify({ avg: null, total: 0, votes: {} }));
-  addLog('Votos reiniciados.');
-});
+  // Leer canal desde URL: ?overlay&ch=lunanny
+  const params = new URLSearchParams(location.search);
+  const ch = params.get('ch') || 'lunanny';
 
-document.getElementById('btnCopyOBS').addEventListener('click', () => {
-  const url = location.origin + location.pathname + '?overlay';
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById('btnCopyOBS');
-    btn.textContent = '✓ Copiado!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = '⧉ Copiar URL OBS';
-      btn.classList.remove('copied');
-    }, 2000);
+  running = true;
+  connectIRC(ch, (user, num, prev) => {
+    updateOverlay();
   });
-});
+}
 
-if (!location.search.includes('overlay')) {
+// ══════════════════════════════════════
+// MODO PANEL
+// ══════════════════════════════════════
+if (!IS_OVERLAY) {
+
+  function initBars() {
+    const wrap = document.getElementById('distBars');
+    wrap.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      wrap.innerHTML += `
+        <div class="bar-wrap">
+          <div class="bar-count" id="c${i}">0</div>
+          <div class="bar"><div class="bar-fill" id="b${i}" style="height:0%"></div></div>
+          <div class="bar-label">${i}</div>
+        </div>`;
+    }
+  }
+
+  function updatePanel() {
+    const vals = Object.values(votes);
+    const total = vals.length;
+    const avg = calcAvg();
+
+    document.getElementById('scoreDisplay').textContent = avg ?? '—';
+    document.getElementById('voterCount').textContent = total + ' voto' + (total !== 1 ? 's' : '');
+
+    const counts = { 1:0, 2:0, 3:0, 4:0, 5:0 };
+    vals.forEach(v => counts[v]++);
+    const maxCount = Math.max(...Object.values(counts), 1);
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById('c' + i).textContent = counts[i];
+      document.getElementById('b' + i).style.height = (counts[i] / maxCount * 100) + '%';
+    }
+
+    document.getElementById('voterList').innerHTML = Object.entries(votes)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([u, s]) => `<div class="voter-row"><span>${u}</span><span class="voter-score">${s}</span></div>`)
+      .join('');
+  }
+
+  function addLog(msg, type) {
+    const log = document.getElementById('chatLog');
+    const div = document.createElement('div');
+    div.className = 'log-entry' + (type ? ' ' + type : '');
+    div.textContent = msg;
+    log.prepend(div);
+    while (log.children.length > 80) log.removeChild(log.lastChild);
+  }
+
+  function setStatus(on, text) {
+    document.getElementById('statusDot').classList.toggle('on', on);
+    document.getElementById('statusText').textContent = text;
+  }
+
+  document.getElementById('btnStart').addEventListener('click', () => {
+    if (!running) {
+      const channel = document.getElementById('channelInput').value.trim().toLowerCase();
+      if (!channel) return;
+      running = true;
+      document.getElementById('btnStart').textContent = '⏹ Detener';
+      document.getElementById('btnStart').classList.add('active');
+      setStatus(true, 'Conectando...');
+
+      connectIRC(channel, (user, num, prev) => {
+        addLog(user + ': ' + num + (prev !== undefined ? ' (antes ' + prev + ')' : ''), 'new');
+        updatePanel();
+      });
+
+      ws.onopen = (() => {
+        const orig = ws.onopen;
+        return function() {
+          if (orig) orig.call(this, arguments);
+          setStatus(true, 'Escuchando #' + channel);
+          addLog('Conectado a #' + channel, 'ok');
+        };
+      })();
+
+      ws.onclose = (() => {
+        return function() {
+          setStatus(false, 'Reconectando...');
+          if (running) setTimeout(() => {
+            connectIRC(channel, (user, num, prev) => {
+              addLog(user + ': ' + num + (prev !== undefined ? ' (antes ' + prev + ')' : ''), 'new');
+              updatePanel();
+            });
+          }, 3000);
+        };
+      })();
+
+    } else {
+      running = false;
+      if (ws) ws.close();
+      document.getElementById('btnStart').textContent = '▶ Iniciar';
+      document.getElementById('btnStart').classList.remove('active');
+      setStatus(false, 'Detenido');
+      addLog('Desconectado.', 'err');
+    }
+  });
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    Object.keys(votes).forEach(k => delete votes[k]);
+    document.getElementById('scoreDisplay').textContent = '—';
+    document.getElementById('voterCount').textContent = '0 votos';
+    document.getElementById('voterList').innerHTML = '';
+    document.getElementById('chatLog').innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById('c' + i).textContent = '0';
+      document.getElementById('b' + i).style.height = '0%';
+    }
+    addLog('Votos reiniciados.');
+  });
+
+  document.getElementById('btnCopyOBS').addEventListener('click', () => {
+    const channel = document.getElementById('channelInput').value.trim().toLowerCase() || 'lunanny';
+    const url = location.origin + location.pathname + '?overlay&ch=' + channel;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('btnCopyOBS');
+      btn.textContent = '✓ Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '⧉ URL para OBS';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  });
+
   initBars();
-  updateUI();
+  updatePanel();
 }
 </script>
 </body>
